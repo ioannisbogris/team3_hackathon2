@@ -15,7 +15,7 @@ load_dotenv(
 
 CONNECTION_STRING = os.getenv(
     "PGVECTOR_CONNECTION_STRING",
-    "postgresql+psycopg://langchain:langchain@localhost:5445/vectorstore",
+    "postgresql+psycopg://langchain:langchain@localhost:5433/vectorstore",
 )
 
 COLLECTION_NAME = os.getenv(
