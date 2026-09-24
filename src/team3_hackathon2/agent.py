@@ -66,6 +66,8 @@ async def load_mcp_tools() -> list:
                 "transport": "stdio",
                 "command": sys.executable,
                 "args": [str(SERVER_PATH)],
+                # stdio only inherits a minimal env by default; the server needs the Azure/PG settings
+                "env": dict(os.environ),
             }
         }
     )
