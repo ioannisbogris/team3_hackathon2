@@ -7,6 +7,7 @@ import logging
 from langchain.agents.structured_output import ToolStrategy
 from langchain_core.tools import BaseTool
 
+from src.team3_hackathon2.guardrails import guarded_tool_execution
 from src.team3_hackathon2.model import DomainFinding
 from src.team3_hackathon2.prompts import (
     AI_GOVERNANCE_PROMPT,
@@ -14,7 +15,6 @@ from src.team3_hackathon2.prompts import (
     PROCUREMENT_PROMPT,
     SECURITY_PROMPT,
 )
-from team3_hackathon2.guardrails import guarded_tool_execution
 
 logger = logging.getLogger(__name__)
 

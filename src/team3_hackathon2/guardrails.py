@@ -13,7 +13,6 @@ from typing import Any
 from langchain.agents.middleware import wrap_tool_call
 from langchain_core.messages import ToolMessage
 
-
 INJECTION_PATTERNS = (
     r"ignore\s+(?:all\s+)?(?:previous|prior|earlier|above)\s+(?:policies?\s+and\s+)?instructions",
     r"disregard\s+(?:all\s+)?(?:previous|prior|above)\s+(?:policies?\s+and\s+)?instructions",
@@ -29,9 +28,7 @@ INJECTION_PATTERNS = (
 def normalize_text(text: str) -> str:
     normalized = unicodedata.normalize("NFKC", text).casefold()
     normalized = "".join(
-        character
-        for character in normalized
-        if unicodedata.category(character) != "Cf"
+        character for character in normalized if unicodedata.category(character) != "Cf"
     )
     return re.sub(r"\s+", " ", normalized)
 
@@ -111,14 +108,9 @@ def retrieve_from_local_pdfs(
     """Small lexical fallback used only when MCP retrieval is unavailable."""
     from pypdf import PdfReader
 
-    root = Path(
-        knowledge_path
-        or os.getenv("NFS_KNOWLEDGE_PATH", "knowledge")
-    )
+    root = Path(knowledge_path or os.getenv("NFS_KNOWLEDGE_PATH", "knowledge"))
     candidates = (
-        list(root.rglob(document_name))
-        if document_name
-        else list(root.rglob("*.pdf"))
+        list(root.rglob(document_name)) if document_name else list(root.rglob("*.pdf"))
     )
     query_terms = {
         term
@@ -135,15 +127,19 @@ def retrieve_from_local_pdfs(
             score = sum(normalized.count(term) for term in query_terms)
             if score or not query_terms:
                 ranked.append(
-                    (score, file_path.name, page_number, safe_text[:max_chars], attempts)
+                    (
+                        score,
+                        file_path.name,
+                        page_number,
+                        safe_text[:max_chars],
+                        attempts,
+                    )
                 )
 
     ranked.sort(key=lambda item: (-item[0], item[1], item[2]))
     selected = ranked[:4]
     injection_attempts = [
-        attempt
-        for _, _, _, _, attempts in selected
-        for attempt in attempts
+        attempt for _, _, _, _, attempts in selected for attempt in attempts
     ]
     evidence = [
         {
