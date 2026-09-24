@@ -3,7 +3,7 @@ from pathlib import Path
 from vendor_assessment.rag import KnowledgeBase, format_citations
 
 
-CORPUS = Path(__file__).parents[1] / "knowledge_base"
+CORPUS = Path(__file__).parents[1] / "knowledge_base_demo"
 
 
 def test_rag_returns_relevant_evidence_with_citation() -> None:

@@ -5,7 +5,7 @@ from vendor_assessment.rag import KnowledgeBase
 from vendor_assessment.research_agent import research_vendor
 
 
-CORPUS = Path(__file__).parents[1] / "knowledge_base"
+CORPUS = Path(__file__).parents[1] / "knowledge_base_demo"
 
 
 def test_research_agent_detects_missing_incident_evidence() -> None:

@@ -43,10 +43,10 @@ TOOL_ROLE_ALLOWLIST: dict[str, frozenset[ToolRole]] = {
 
 
 INJECTION_PATTERNS = (
-    r"ignore\s+(?:all\s+)?(?:previous|prior|earlier|above)\s+instructions",
-    r"disregard\s+(?:all\s+)?(?:previous|prior|above)\s+instructions",
+    r"ignore\s+(?:all\s+)?(?:previous|prior|earlier|above)\s+(?:policies?\s+and\s+)?instructions",
+    r"disregard\s+(?:all\s+)?(?:previous|prior|above)\s+(?:policies?\s+and\s+)?instructions",
     r"reveal\s+(?:the\s+)?(?:system|developer)\s+prompt",
-    r"show\s+(?:the\s+)?hidden\s+instructions",
+    r"show\s+(?:the\s+)?hidden\s+(?:policies?\s+and\s+)?instructions",
     r"bypass\s+(?:the\s+)?(?:security|authorization|safety)\s+(?:policy|controls?)",
     r"you\s+are\s+now\s+(?:the\s+)?(?:system|developer|admin)",
 )
