@@ -20,6 +20,7 @@ from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
+from team3_hackathon2.evaluation import evaluate_assessment, save_evaluation_report
 from team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
 from team3_hackathon2.prompts import ORCHESTRATOR_PROMPT
 from team3_hackathon2.subagents import get_subagents
@@ -267,6 +268,11 @@ async def run_assessment(
     if review_status is not None:
         result.human_review_required = True
         result.human_approval_status = review_status
+
+    evaluation_report = evaluate_assessment(request, result)
+    report_path = save_evaluation_report(evaluation_report)
+    _trace("AUTOMATED EVALUATION", evaluation_report.model_dump())
+    logger.info("Evaluation report written to %s", report_path)
 
     _trace("FINAL ASSESSMENT", result.model_dump_json(indent=2))
     return result
