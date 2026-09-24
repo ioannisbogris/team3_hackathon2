@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Generated per-run evaluation reports
+evaluation-results/*-evaluation.json
