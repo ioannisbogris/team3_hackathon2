@@ -15,8 +15,10 @@ dependencies = [
     "langchain-postgres>=0.0.18",
     "langchain-text-splitters>=1.1.2",
     "mcp>=1.30.0",
+    "openai>=3.19.2",
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.13.5",
+    "pypdf>=6.19.0",
 ]
 
 [project.scripts]
@@ -25,3 +27,8 @@ team3-hackathon2 = "team3_hackathon2:main"
 [build-system]
 requires = ["uv_build>=0.11.16,<0.12.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
