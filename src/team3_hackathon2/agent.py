@@ -20,9 +20,9 @@ from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
-from src.team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
-from src.team3_hackathon2.prompts import ORCHESTRATOR_PROMPT
-from src.team3_hackathon2.subagents import get_subagents
+from team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
+from team3_hackathon2.prompts import ORCHESTRATOR_PROMPT
+from team3_hackathon2.subagents import get_subagents
 
 load_dotenv()
 logging.basicConfig(

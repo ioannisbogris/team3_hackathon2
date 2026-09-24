@@ -8,13 +8,13 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 from pydantic import BaseModel, Field
 
-from src.team3_hackathon2.agent import (
+from team3_hackathon2.agent import (
     _stream,
     build_agent,
     get_langfuse_callbacks,
     load_mcp_tools,
 )
-from src.team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
+from team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
 
 app = FastAPI()
 checkpointer = MemorySaver()

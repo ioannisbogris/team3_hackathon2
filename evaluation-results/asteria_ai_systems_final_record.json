@@ -1,0 +1,6 @@
+{
+    "vendor": "Asteria AI Systems",
+    "recommendation": "CONDITIONAL APPROVAL",
+    "risk_rating": "Medium",
+    "executive_summary": "Security: Vendor meets key NFS security policies including encryption in transit and at rest, MFA, RBAC, and holds ISO 27001 and SOC 2 Type II certifications. Missing evidence on incident response timing and penetration testing details. Procurement: Pricing and TCO exceed EUR 100,000 requiring multi-stakeholder approval. Competitive sourcing and Information Security approval needed. Missing contract renewal and termination details. Legal: Vendor operates multi-tenant SaaS in EU with encryption and logical isolation. No prior vendor history. Missing detailed DPA clauses, liability caps, indemnity, and termination provisions. AI Governance: Vendor claims no training on customer data and moderate retention periods. Missing evidence on bias mitigation, guardrails, transparency, and human oversight. Overall risk is Medium with unknown AI Governance controls. Conditions include obtaining Information Security approval, competitive sourcing, budget and approval confirmation, and contract term clarifications."
+}
