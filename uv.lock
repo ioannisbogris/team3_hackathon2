@@ -2154,7 +2154,7 @@ wheels = [
 ]
 
 [[package]]
-name = "team3-hackathon2"
+name = "nfs-vendor-assessment"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
