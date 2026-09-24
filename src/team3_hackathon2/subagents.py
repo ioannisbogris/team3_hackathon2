@@ -4,9 +4,9 @@ Specialist subagents.
 
 import logging
 
+from langchain.agents.structured_output import ToolStrategy
 from langchain_core.tools import BaseTool
 
-from team3_hackathon2.guardrails import guarded_tool_execution
 from src.team3_hackathon2.model import DomainFinding
 from src.team3_hackathon2.prompts import (
     AI_GOVERNANCE_PROMPT,
@@ -14,6 +14,7 @@ from src.team3_hackathon2.prompts import (
     PROCUREMENT_PROMPT,
     SECURITY_PROMPT,
 )
+from team3_hackathon2.guardrails import guarded_tool_execution
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ def get_subagents(tools: list[BaseTool]) -> list[dict]:
             "system_prompt": SECURITY_PROMPT,
             "tools": _select_tools(tools, "security_subagent"),
             "middleware": [guarded_tool_execution],
-            "response_format": DomainFinding,
+            "response_format": ToolStrategy(DomainFinding),
         },
         {
             "name": "procurement_subagent",
@@ -59,7 +60,7 @@ def get_subagents(tools: list[BaseTool]) -> list[dict]:
             "system_prompt": PROCUREMENT_PROMPT,
             "tools": _select_tools(tools, "procurement_subagent"),
             "middleware": [guarded_tool_execution],
-            "response_format": DomainFinding,
+            "response_format": ToolStrategy(DomainFinding),
         },
         {
             "name": "legal_subagent",
@@ -70,7 +71,7 @@ def get_subagents(tools: list[BaseTool]) -> list[dict]:
             "system_prompt": LEGAL_PROMPT,
             "tools": _select_tools(tools, "legal_subagent"),
             "middleware": [guarded_tool_execution],
-            "response_format": DomainFinding,
+            "response_format": ToolStrategy(DomainFinding),
         },
         {
             "name": "ai_governance_subagent",
@@ -81,6 +82,6 @@ def get_subagents(tools: list[BaseTool]) -> list[dict]:
             "system_prompt": AI_GOVERNANCE_PROMPT,
             "tools": _select_tools(tools, "ai_governance_subagent"),
             "middleware": [guarded_tool_execution],
-            "response_format": DomainFinding,
+            "response_format": ToolStrategy(DomainFinding),
         },
     ]

@@ -13,6 +13,8 @@ from uuid import uuid4
 
 from deepagents import create_deep_agent
 from dotenv import load_dotenv
+from langchain.agents.middleware import ToolRetryMiddleware
+from langchain.agents.structured_output import ToolStrategy
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
@@ -83,9 +85,19 @@ def build_agent(tools: list, checkpointer):
         system_prompt=ORCHESTRATOR_PROMPT,
         tools=orchestrator_tools,
         subagents=get_subagents(tools),
-        response_format=VendorRiskAssessment,
+        response_format=ToolStrategy(VendorRiskAssessment),
         interrupt_on=INTERRUPT_ON,
         checkpointer=checkpointer,
+        middleware=[
+            ToolRetryMiddleware(
+                max_retries=1,
+                tools=["tasks"],
+                on_failure=lambda exc: (
+                    f"Subagent failed: {exc}. Record this domain as UNKNOWN "
+                    "(missing evidence) and continue with the other domains."
+                ),
+            )
+        ],
     )
 
 
@@ -171,19 +183,21 @@ async def _collect_decisions(interrupts) -> list[dict]:
 
 async def _stream(agent, payload, config) -> list:
     """Run the graph until it finishes or pauses. Returns pending interrupts (empty if done)."""
-    interrupts = []
+    interrupts = {}
     async with asyncio.timeout(AGENT_TIMEOUT_SECONDS):
-        async for update in agent.astream(
-            payload, config=config, stream_mode="updates"
+        async for namespace, update in agent.astream(
+            payload, config=config, stream_mode="updates", subgraphs=True
         ):
+            where = "SUBAGENT" if namespace else "ORCHESTRATOR"
             for node_name, node_update in update.items():
                 if node_name == "__interrupt__":
-                    interrupts.extend(node_update)
+                    for item in node_update:
+                        interrupts[getattr(item, "id", id(item))] = item
                     continue
-                _trace("GRAPH STEP", node_name)
+                _trace(f"{where} STEP", node_name)
                 if isinstance(node_update, dict):
                     _trace_messages(node_update.get("messages", []))
-    return interrupts
+    return list(interrupts.values())
 
 
 # Entry point
@@ -269,7 +283,8 @@ async def main():
     if os.getenv("LANGFUSE_PUBLIC_KEY"):
         from langfuse import get_client
 
-        get_client().flush()  
+        get_client().flush()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
