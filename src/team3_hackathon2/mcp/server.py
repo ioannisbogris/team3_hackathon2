@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from team3_hackathon2 import get_vector_store # todo !!!!!!!!!!!
+from team3_hackathon2.rag.vector_store import get_vector_store 
 
 from mcp.server.fastmcp import FastMCP
 
