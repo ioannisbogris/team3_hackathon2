@@ -1,10 +1,5 @@
 """
 Main deep agent: Vendor Risk & Procurement orchestrator.
-
-Flow: VendorAssessmentRequest -> plan (write_todos) -> 4 specialist subagents (task tool, MCP tools)
-      -> synthesis -> record_assessment (paused for human review) -> VendorRiskAssessment.
-
-Local stack (docker-compose): Postgres checkpointer + self-hosted Langfuse.
 """
 
 import asyncio
@@ -21,7 +16,6 @@ from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import AzureChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.types import Command
 
 from src.team3_hackathon2.model import VendorAssessmentRequest, VendorRiskAssessment
@@ -35,9 +29,8 @@ logging.basicConfig(
 logger = logging.getLogger("vendor_risk_agent")
 
 SERVER_PATH = Path(__file__).parent / "mcp" / "server.py"
-DB_URI = os.getenv("DB_URI")
 AGENT_TIMEOUT_SECONDS = int(os.getenv("AGENT_TIMEOUT_SECONDS", "300"))
-HITL_MODE = os.getenv("HITL_MODE", "cli")
+HITL_MODE = os.getenv("HITL_MODE", "cli")  # cli | approve | reject
 
 ORCHESTRATOR_TOOLS = {"record_assessment"}
 
@@ -96,9 +89,7 @@ def build_agent(tools: list, checkpointer):
     )
 
 
-# ---------------------------------------------------------------------------
-# Console tracing (kept for the demo; Langfuse is the real observability)
-# ---------------------------------------------------------------------------
+# Console tracing
 def _trace(label, value=None):
     print(f"\n[{datetime.now():%H:%M:%S}] {label}")
     if value is not None:
@@ -195,9 +186,7 @@ async def _stream(agent, payload, config) -> list:
     return interrupts
 
 
-# ---------------------------------------------------------------------------
 # Entry point
-# ---------------------------------------------------------------------------
 async def run_assessment(
     request: VendorAssessmentRequest, checkpointer
 ) -> VendorRiskAssessment | None:
@@ -236,7 +225,7 @@ async def run_assessment(
             )
     except TimeoutError:
         logger.error(
-            "Workflow timed out after %ss (thread %s). State is checkpointed; resume is possible.",
+            "Workflow timed out after %ss (thread %s).",
             AGENT_TIMEOUT_SECONDS,
             thread_id,
         )
@@ -260,23 +249,12 @@ async def main():
         data_classification="confidential corporate documents",
     )
 
-    if DB_URI:
-        async with AsyncPostgresSaver.from_conn_string(DB_URI) as checkpointer:
-            await checkpointer.setup()  # creates tables on first run, no-op afterwards
-            await run_assessment(request, checkpointer)
-    else:
-        logger.warning(
-            "DB_URI not set: using in-memory checkpointer (state lost on exit)"
-        )
-        await run_assessment(request, MemorySaver())
+    await run_assessment(request, MemorySaver())
 
     if os.getenv("LANGFUSE_PUBLIC_KEY"):
         from langfuse import get_client
 
-        get_client().flush()  # short-lived script: make sure traces are sent
-
+        get_client().flush()  
 
 if __name__ == "__main__":
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())
