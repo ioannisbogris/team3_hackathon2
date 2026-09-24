@@ -7,7 +7,17 @@ authors = [
     { name = "Ioannis Bogris", email = "bogrisgiannis@gmail.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "deepagents>=0.7.18",
+    "dotenv>=0.9.9",
+    "langchain-mcp-adapters>=0.3.2",
+    "langchain-openai>=1.6.5",
+    "langchain-postgres>=0.0.18",
+    "langchain-text-splitters>=1.1.2",
+    "mcp>=1.30.0",
+    "psycopg[binary]>=3.3.6",
+    "pydantic>=2.13.5",
+]
 
 [project.scripts]
 team3-hackathon2 = "team3_hackathon2:main"
