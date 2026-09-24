@@ -5,10 +5,13 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
 
-from .vector_store import get_vector_store
+from team3_hackathon2.rag.vector_store import get_vector_store
 
 
-KNOWLEDGE_BASE_PATH = Path("knowledge")
+KNOWLEDGE_BASE_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "knowledge"
+)
 
 
 def build_source_id(file_path: Path) -> str:
@@ -72,8 +75,8 @@ def split_documents(
     documents: list[Document],
 ) -> list[Document]:
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150,
+        chunk_size=300,
+        chunk_overlap=30,
     )
 
     chunks = splitter.split_documents(documents)

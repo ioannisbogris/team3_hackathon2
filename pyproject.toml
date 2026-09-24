@@ -21,6 +21,7 @@ dependencies = [
     "openai>=3.19.2",
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.13.5",
+    "pypdf>=6.19.0",
     "uvicorn>=0.53.0",
 ]
 
