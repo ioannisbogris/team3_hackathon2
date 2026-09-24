@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "deepagents>=0.7.18",
     "dotenv>=0.9.9",
+    "fastapi>=0.141.1",
     "langchain-mcp-adapters>=0.3.2",
     "langchain-openai>=1.6.5",
     "langchain-postgres>=0.0.18",
@@ -17,8 +18,10 @@ dependencies = [
     "langfuse>=4.15.4",
     "langgraph-checkpoint-postgres>=3.1.2",
     "mcp>=1.30.0",
+    "openai>=3.19.2",
     "psycopg[binary]>=3.3.6",
     "pydantic>=2.13.5",
+    "uvicorn>=0.53.0",
 ]
 
 [project.scripts]
@@ -27,3 +30,8 @@ team3-hackathon2 = "team3_hackathon2:main"
 [build-system]
 requires = ["uv_build>=0.11.16,<0.12.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
