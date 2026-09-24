@@ -14,7 +14,7 @@ from uuid import uuid4
 from deepagents import create_deep_agent
 from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
@@ -42,8 +42,9 @@ INTERRUPT_ON = {
 # Building blocks
 def get_llm():
     """Model is configuration."""
-    return AzureChatOpenAI(
-        azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"], temperature=0
+    return ChatOpenAI(
+        model=os.getenv("OPENAI_CHAT_MODEL", "gpt-4.1-mini"),
+        temperature=0,
     )
 
 
