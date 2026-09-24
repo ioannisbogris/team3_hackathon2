@@ -216,10 +216,21 @@ async def run_assessment(
     }
     _trace("STARTING ASSESSMENT", payload["messages"][0]["content"])
 
+    review_status = None
+
     try:
         interrupts = await _stream(agent, payload, config)
         while interrupts:  # pause -> human decision -> resume on the same thread
             decisions = await _collect_decisions(interrupts)
+
+            decision_types = {decision["type"] for decision in decisions}
+            if "reject" in decision_types:
+                review_status = "rejected"
+            elif "edit" in decision_types:
+                review_status = "edited"
+            elif "approve" in decision_types:
+                review_status = "approved"
+
             interrupts = await _stream(
                 agent, Command(resume={"decisions": decisions}), config
             )
@@ -236,6 +247,10 @@ async def run_assessment(
     if result is None:
         logger.error("No structured response produced (thread %s)", thread_id)
         return None
+
+    if review_status is not None:
+        result.human_review_required = True
+        result.human_approval_status = review_status
 
     _trace("FINAL ASSESSMENT", result.model_dump_json(indent=2))
     return result

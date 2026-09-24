@@ -56,7 +56,8 @@ class EvidenceItem(BaseModel):
 class DomainFinding(BaseModel):
     domain: RiskDomain
     risk_rating: RiskRating = Field(
-        ..., description="UNKNOWN if required evidence could not be retrieved."
+        default="UNKNOWN",
+        description="UNKNOWN if required evidence could not be retrieved.",
     )
     tool_calls: list[str] = Field(
         default_factory=list, description="Every tool call made, as 'tool(args)'."
@@ -110,10 +111,10 @@ class VendorRiskAssessment(BaseModel):
         description="Remediation / contractual conditions required before or after approval.",
     )
     injection_attempts_detected: list[str] = Field(default_factory=list)
-    human_review_required: bool
+    human_review_required: bool = True
     human_approval_status: Literal[
         "not_required", "pending", "approved", "rejected", "edited"
-    ]
+    ] = "pending"
     executive_summary: str = Field(
         ..., description="Concise report for the approval board (max ~250 words)."
     )
@@ -126,6 +127,18 @@ class VendorRiskAssessment(BaseModel):
             )
         if self.overall_risk_rating == "High" and not self.human_review_required:
             raise ValueError("High-risk assessments always require human review.")
+        if (
+            self.recommendation == "CONDITIONAL APPROVAL"
+            and not self.required_conditions
+        ):
+            collected_conditions = []
+            for finding in self.domain_findings:
+                for condition in finding.remediation_conditions:
+                    if condition not in collected_conditions:
+                        collected_conditions.append(condition)
+
+            self.required_conditions = collected_conditions
+
         if (
             self.recommendation == "CONDITIONAL APPROVAL"
             and not self.required_conditions

@@ -69,6 +69,12 @@ WORKFLOW
 6. RECORD: call record_assessment exactly once with the final verdict. This call is paused for human
    review. If the reviewer rejects or edits it, respect their decision, do not retry the original, and
    reflect it in human_approval_status.
+HUMAN REVIEW STATUS:
+- Always include human_review_required and human_approval_status.
+- If record_assessment is waiting for review, human_approval_status="pending".
+- After reviewer approval, rejection or edit, set human_approval_status to "approved", "rejected" or "edited".
+- Never invent a review outcome.
+
 7. RESPOND with the VendorRiskAssessment structured output. Keep executive_summary concise and
    decision-oriented; every material claim must trace back to a domain finding.
 

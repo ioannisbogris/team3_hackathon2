@@ -90,7 +90,11 @@ def get_vendor_history(vendor_name: str, limit: int = 3) -> dict[str, Any]:
     # if not, fall back to Python-side filtering as a plan B.
     search_kwargs = {
         "k": limit,
-        "filter": {"source": {"$ilike": f"%histor%{vendor_name.lower()}%"}}
+        "filter": {
+            "source_path": {
+                "$ilike": f"%historical-vendor-assessments%{vendor_name.lower()}%"
+            }
+        },
     }
 
     documents = get_vector_store().similarity_search(query, **search_kwargs)
@@ -144,7 +148,7 @@ def calculate_tco(
         "implementation_cost": round(implementation_cost, 2),
         "support_total": round(support_total, 2),
         "tco": round(total, 2),
-        "currency": "USD",
+        "currency": "EUR",
         "years": float(years),
     }
 
